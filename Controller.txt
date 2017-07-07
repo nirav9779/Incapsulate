@@ -1,0 +1,54 @@
+/* Display Standard Account related Opportunities 
+ * and User able to delete and view that account related Opportunies
+ */ 
+public class testOpportunities {
+    
+    public Account acc {get; set;}
+    public Id accId {get; set;}
+    public List<wrapOpportunity> oppAll {get; set;}
+    
+    /* Default Constructor */    
+    public testOpportunities(ApexPages.StandardController controller) {
+        this.acc = (Account)controller.getRecord();
+        fetchOpportunity();
+        accId = ApexPages.currentPage().getParameters().get('accId');
+    }
+    
+    /* get the Account records*/
+    public Account getAccount() {
+      Account acc  = [SELECT Id,Name FROM Account WHERE Id = :acc.Id];
+        return acc;
+    }
+    
+    /* delete Account related Opportunity */
+    public void deleteOpp() {
+        String indexData = ApexPages.currentPage().getParameters().get('indexInsert');
+        Integer indexl = Integer.valueOf(indexData);
+        delete oppAll[indexl].oppData;
+        fetchOpportunity();
+    }
+    
+    /* fetch Opportunities related to account*/
+    public void fetchOpportunity() {
+        oppAll = new List<wrapOpportunity>();
+        List<Opportunity> oppRelatedToAccount = [SELECT id,Name, Account.name, StageName, CloseDate, Amount, Type FROM Opportunity WHERE AccountId = :acc.Id];
+        for(Opportunity oppty : oppRelatedToAccount) {
+            wrapOpportunity wpOpp = new wrapOpportunity();
+            wpOpp.oppData = oppty;
+            wpOpp.blnIsView = true; // when true will have Del Button
+            oppAll.add(wpOpp);
+        }
+    }
+    
+    /* wrapper class for Opportunites */
+      public class wrapOpportunity {
+          
+      	public Opportunity oppData {get; set;}
+        public boolean blnIsView {get; set;}
+          
+        public wrapOpportunity() {   
+            oppData	= new Opportunity();
+            blnIsView = false; //by default setting false
+        }
+    }
+}

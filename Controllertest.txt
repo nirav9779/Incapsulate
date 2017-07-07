@@ -1,0 +1,48 @@
+/* Test Class for testOpportunities Controller */
+@IsTest
+private class testOpportunitiesTest {
+    private static Account account;
+    private static Opportunity theOpp;
+	
+@testSetup
+    private static void setupData() {
+        
+		account = new Account(Name = 'TestAccount');
+        insert account;
+        
+        theOpp = new Opportunity(Name = 'TestOpportunity', CloseDate = Date.today(), StageName = 'Prospecting', AccountId = account.Id);
+        insert theOpp;
+	}
+    /* Test exsiting Opportunity which is related to that Account */
+    private static testMethod void testSaveOpportunity() {
+        setupData();
+        Test.startTest();
+        ApexPages.StandardController controller = new ApexPages.StandardController(account);
+        PageReference niravPage = Page.testNewPage;
+        niravPage.getParameters().put('accId', account.Id);
+        Test.setCurrentPage(niravPage);
+        testOpportunities stdcontroller = new testOpportunities(controller);
+        stdcontroller.fetchOpportunity();
+        Test.stopTest();
+        
+        System.assertEquals(theOpp.Id, stdcontroller.oppAll[0].oppData.Id, 'OpportunityId should match');
+        System.assertEquals(theOpp.Name, stdcontroller.oppAll[0].oppData.Name, 'Opportunity Name should match');
+        System.assertEquals(theOpp.StageName, stdcontroller.oppAll[0].oppData.StageName, 'Opportunity StageName should match');
+    }
+    
+    /* Delete the Opportunity to related account */
+    private static testMethod void testDeleteOpportunity() {
+        setupData();
+        Test.startTest();
+        ApexPages.StandardController controller = new ApexPages.StandardController(account);
+        PageReference incapsulatePage = Page.testNewPage;
+        incapsulatePage.getParameters().put('accId', account.Id);
+        incapsulatePage.getParameters().put('indexInsert','0');
+        Test.setCurrentPage(incapsulatePage);
+        testOpportunities stdcontroller = new testOpportunities(controller);
+        stdcontroller.deleteOpp();
+        Test.stopTest();
+        
+        System.assertEquals(0, stdcontroller.oppAll.size(), 'There should be no opportunity for the account');
+    }
+}

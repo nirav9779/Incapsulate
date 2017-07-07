@@ -1,0 +1,33 @@
+<apex:page standardController="Account" extensions="testOpportunities" sidebar="false" >
+    <apex:form id="frm">
+        <apex:sectionHeader title="Account" subtitle="{!Account.Name}"/>
+		<apex:pageBlock id="Custom" title="RelatedOpportunities">
+            <apex:variable var="index" value="{!0}"/>
+                <apex:pageBlockTable value="{!oppAll}" var="opp">
+                    <apex:column headerValue="Action">
+                        <apex:commandLink value="Del" action="{!deleteOpp}">
+                            <apex:param name="indexInsert" value="{!index}"/>
+                        </apex:commandLink>
+                        <a href="{!$Site.BaseUrl}/{!opp.oppData.Id}">View</a>
+                    </apex:column>
+                    <apex:column headerValue="Name">
+                        <apex:outputField value="{!opp.oppData.name}" rendered="{!opp.blnIsView}"/>
+                    </apex:column>
+                    <apex:column headerValue="StageName">
+                        <apex:outputField value="{!opp.oppData.StageName}" rendered="{!opp.blnIsView}"/>
+                    </apex:column>
+                   <apex:column headerValue="Closedate">
+                        <apex:outputField value="{!opp.oppData.Closedate}" rendered="{!opp.blnIsView}"/>
+                       <apex:variable var="index" value="{!index+1}"/>
+                    </apex:column>
+                    <apex:column headerValue="Amount">
+                        <apex:outputField value="{!opp.oppData.Amount}" rendered="{!opp.blnIsView}"/>
+                       <apex:variable var="index" value="{!index+1}"/>
+                    </apex:column>
+                    <apex:column headerValue="Type">
+                        <apex:outputField value="{!opp.oppData.Type}" rendered="{!opp.blnIsView}"/>
+                       <apex:variable var="index" value="{!index+1}"/>
+                    </apex:column>
+                </apex:pageBlockTable> 
+        </apex:pageBlock>
+    </apex:form>
